@@ -1,0 +1,62 @@
+@startuml
+skinparam dpi 170
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam ArrowColor #3B4A5C
+skinparam ArrowThickness 1.1
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B4A5C
+  BorderThickness 1.3
+  HeaderBackgroundColor #ECEFF3
+  FontStyle bold
+  StereotypeFontColor #555555
+  BackgroundColor<<sut>> #E6EDF6
+  BorderColor<<sut>> #1F3A5F
+  BackgroundColor<<externo>> #F4F4F4
+  BorderColor<<externo>> #8A8A8A
+}
+skinparam note {
+  BackgroundColor #FDFBEA
+  BorderColor #B9A64B
+  FontSize 11
+}
+skinparam stereotypeIBackgroundColor #FFF4D6
+skinparam stereotypeABackgroundColor #E3F1E8
+hide empty members
+class ServicioAutenticacion <<sut>> {
+  -intentos: Map<String, Integer>
+  +ServicioAutenticacion(credenciales: ServicioCredenciales,
+  auditoria: RegistroAuditoria, alertas: Alertas)
+  +iniciarSesion(usuario: String, clave: String): ResultadoLogin
+}
+interface ServicioCredenciales {
+  +valida(usuario: String, clave: String): boolean
+}
+interface RegistroAuditoria {
+  +registrar(evento: String, usuario: String): void
+}
+interface Alertas {
+  +cuentaBloqueada(usuario: String): void
+}
+class DirectorioLdap <<externo>>
+class AuditoriaSeguridad <<externo>>
+class AlertasCorreo <<externo>>
+enum ResultadoLogin {
+  EXITOSO
+  FALLIDO
+  BLOQUEADO
+}
+ServicioAutenticacion --> ServicioCredenciales
+ServicioAutenticacion --> RegistroAuditoria
+ServicioAutenticacion --> Alertas
+ServicioCredenciales <|.. DirectorioLdap
+RegistroAuditoria <|.. AuditoriaSeguridad
+Alertas <|.. AlertasCorreo
+ServicioAutenticacion ..> ResultadoLogin
+@enduml

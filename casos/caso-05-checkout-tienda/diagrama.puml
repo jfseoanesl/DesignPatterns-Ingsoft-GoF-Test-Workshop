@@ -1,0 +1,55 @@
+@startuml
+skinparam dpi 170
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam ArrowColor #3B4A5C
+skinparam ArrowThickness 1.1
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B4A5C
+  BorderThickness 1.3
+  HeaderBackgroundColor #ECEFF3
+  FontStyle bold
+  StereotypeFontColor #555555
+  BackgroundColor<<sut>> #E6EDF6
+  BorderColor<<sut>> #1F3A5F
+  BackgroundColor<<externo>> #F4F4F4
+  BorderColor<<externo>> #8A8A8A
+}
+skinparam note {
+  BackgroundColor #FDFBEA
+  BorderColor #B9A64B
+  FontSize 11
+}
+skinparam stereotypeIBackgroundColor #FFF4D6
+skinparam stereotypeABackgroundColor #E3F1E8
+hide empty members
+class ConfirmacionCompra <<sut>> {
+  -inventario: Inventario
+  +ConfirmacionCompra(inventario: Inventario)
+  +confirmar(items: Map<String, Integer>, tarjeta: String,
+  total: long): boolean
+}
+interface Inventario {
+  +disponible(sku: String): int
+  +reservar(sku: String, cantidad: int): void
+  +liberar(sku: String, cantidad: int): void
+}
+class InventarioJdbc <<externo>>
+class SdkBanco <<externo>> {
+  +{static} autorizar(tarjeta: String, monto: long): String
+  +{static} capturar(codigoAutorizacion: String): void
+}
+ConfirmacionCompra --> "1" Inventario
+Inventario <|.. InventarioJdbc
+ConfirmacionCompra ..> SdkBanco : <<llamada estática>>
+note right of SdkBanco
+  SDK oficial del banco:
+  clase final, no modificable
+end note
+@enduml

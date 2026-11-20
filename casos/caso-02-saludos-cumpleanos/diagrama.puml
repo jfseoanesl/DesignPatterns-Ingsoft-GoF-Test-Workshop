@@ -1,0 +1,54 @@
+@startuml
+skinparam dpi 170
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam ArrowColor #3B4A5C
+skinparam ArrowThickness 1.1
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B4A5C
+  BorderThickness 1.3
+  HeaderBackgroundColor #ECEFF3
+  FontStyle bold
+  StereotypeFontColor #555555
+  BackgroundColor<<sut>> #E6EDF6
+  BorderColor<<sut>> #1F3A5F
+  BackgroundColor<<externo>> #F4F4F4
+  BorderColor<<externo>> #8A8A8A
+}
+skinparam note {
+  BackgroundColor #FDFBEA
+  BorderColor #B9A64B
+  FontSize 11
+}
+skinparam stereotypeIBackgroundColor #FFF4D6
+skinparam stereotypeABackgroundColor #E3F1E8
+hide empty members
+class ServicioCumpleanos <<sut>> {
+  +enviarSaludos(): int
+}
+class BaseDatos <<externo>> {
+  +{static} consultarClientes(): List<Cliente>
+}
+class ClienteSmtp <<externo>> {
+  +ClienteSmtp(servidor: String, puerto: int)
+  +enviar(para: String, asunto: String, cuerpo: String): void
+}
+class LocalDate <<JDK>> {
+  +{static} now(): LocalDate
+}
+class Cliente <<record>> {
+  +nombre: String
+  +correo: String
+  +nacimiento: LocalDate
+}
+ServicioCumpleanos ..> BaseDatos : <<llamada estática>>
+ServicioCumpleanos ..> ClienteSmtp : <<crea con new>>
+ServicioCumpleanos ..> LocalDate : now()
+BaseDatos ..> Cliente
+@enduml

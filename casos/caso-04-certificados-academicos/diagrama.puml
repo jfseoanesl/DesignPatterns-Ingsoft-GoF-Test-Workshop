@@ -1,0 +1,62 @@
+@startuml
+skinparam dpi 170
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam roundCorner 6
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam ArrowColor #3B4A5C
+skinparam ArrowThickness 1.1
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #3B4A5C
+  BorderThickness 1.3
+  HeaderBackgroundColor #ECEFF3
+  FontStyle bold
+  StereotypeFontColor #555555
+  BackgroundColor<<sut>> #E6EDF6
+  BorderColor<<sut>> #1F3A5F
+  BackgroundColor<<externo>> #F4F4F4
+  BorderColor<<externo>> #8A8A8A
+}
+skinparam note {
+  BackgroundColor #FDFBEA
+  BorderColor #B9A64B
+  FontSize 11
+}
+skinparam stereotypeIBackgroundColor #FFF4D6
+skinparam stereotypeABackgroundColor #E3F1E8
+hide empty members
+class EmisorCertificados <<sut>> {
+  +emitir(e: Estudiante, tipo: TipoCertificado,
+  formato: String): String
+  -redactar(e: Estudiante, tipo: TipoCertificado): String
+}
+interface Exportador {
+  +exportar(nombre: String, contenido: String): String
+}
+class ExportadorPdf <<externo>> {
+  -RUTA: String = "/srv/registro/certificados"
+}
+class ExportadorHtml <<externo>> {
+  -URL: String = "https://portal.universidad.edu.co"
+}
+class Estudiante <<record>> {
+  +nombre: String
+  +programa: String
+  +promedio: double
+  +matriculaActiva: boolean
+}
+enum TipoCertificado {
+  NOTAS
+  MATRICULA
+}
+Exportador <|.. ExportadorPdf
+Exportador <|.. ExportadorHtml
+EmisorCertificados ..> ExportadorPdf : <<crea con new>> (switch)
+EmisorCertificados ..> ExportadorHtml : <<crea con new>> (switch)
+EmisorCertificados ..> Estudiante
+EmisorCertificados ..> TipoCertificado
+@enduml
